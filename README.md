@@ -12,6 +12,9 @@
 - **系統日誌**：自動記錄操作日誌
 - **單元測試**：25 個測試案例覆蓋核心功能
 
+## 螢幕快照
+<img width="907" height="899" alt="image1" src="https://github.com/user-attachments/assets/add261f2-d1ce-4254-b5b3-8851986b2943" />
+
 ## 技術需求
 
 - C++17 編譯器（clang++ / g++）
