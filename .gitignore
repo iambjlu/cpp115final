@@ -1,0 +1,7 @@
+build/
+data/*.json
+*.o
+*.exe
+*.dSYM/
+.idea/
+*.iml
