@@ -15,6 +15,7 @@ public:
     void showDiaryList(const std::vector<DiaryEntry*>& entries);
     int showSearchMenu();
     std::string promptInput(const std::string& prompt);
+    std::string promptPassword(const std::string& prompt);
     void clearScreen();
     void printError(const std::string& msg);
     void printSuccess(const std::string& msg);

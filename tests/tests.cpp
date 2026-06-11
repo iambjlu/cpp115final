@@ -344,3 +344,44 @@ TEST(SearchTest, SearchFiltersOutSystemLogs) {
     }
     ASSERT_LE(results.size(), 2u);  // At most 2 diary entries
 }
+
+TEST(AccountTest, DeleteAccountSuccess) {
+    AccountManager manager;
+    manager.registerAccount("testuser", "password123");
+    manager.login("testuser", "password123");
+    ASSERT_TRUE(manager.isLoggedIn());
+
+    ASSERT_TRUE(manager.deleteAccount("password123"));
+    ASSERT_FALSE(manager.isLoggedIn());
+    ASSERT_EQ(manager.getCurrentUser(), nullptr);
+    ASSERT_EQ(manager.getAccounts().size(), 0u);
+}
+
+TEST(AccountTest, DeleteAccountWrongPassword) {
+    AccountManager manager;
+    manager.registerAccount("testuser", "password123");
+    manager.login("testuser", "password123");
+
+    ASSERT_FALSE(manager.deleteAccount("wrongpassword"));
+    ASSERT_TRUE(manager.isLoggedIn());  // Still logged in
+    ASSERT_EQ(manager.getAccounts().size(), 1u);  // Account still exists
+}
+
+TEST(AccountTest, DeleteAccountNotLoggedIn) {
+    AccountManager manager;
+    manager.registerAccount("testuser", "password123");
+    ASSERT_FALSE(manager.deleteAccount("password123"));  // Not logged in
+    ASSERT_EQ(manager.getAccounts().size(), 1u);  // Account still exists
+}
+
+TEST(AccountTest, DeleteAccountRemovesFromMap) {
+    AccountManager manager;
+    manager.registerAccount("user1", "pass1");
+    manager.registerAccount("user2", "pass2");
+    manager.login("user1", "pass1");
+
+    ASSERT_TRUE(manager.deleteAccount("pass1"));
+    ASSERT_EQ(manager.getAccounts().size(), 1u);
+    ASSERT_EQ(manager.getAccounts().find("user1"), manager.getAccounts().end());
+    ASSERT_NE(manager.getAccounts().find("user2"), manager.getAccounts().end());
+}

@@ -248,6 +248,36 @@ void DiaryApp::listEntries() {
     ui_.pressEnterToContinue();
 }
 
+void DiaryApp::deleteAccount() {
+    ui_.clearScreen();
+    std::cout << "\033[1;35m===== 刪除帳號 =====\033[0m\n";
+    ui_.printError("警告：此操作將永久刪除您的帳號及所有日記");
+    std::string password = ui_.promptPassword("請輸入密碼確認");
+
+    // Save ownerId before deletion because deleteAccount nullifies currentUser_
+    std::string ownerId = accountManager_.getCurrentUser()->id;
+
+    if (accountManager_.deleteAccount(password)) {
+        // Remove all diary entries belonging to this account
+        entries_.erase(
+            std::remove_if(entries_.begin(), entries_.end(),
+                [&ownerId](const std::unique_ptr<BaseEntry>& e) {
+                    return e->type() == "diary" &&
+                           static_cast<DiaryEntry*>(e.get())->ownerId() == ownerId;
+                }),
+            entries_.end()
+        );
+
+        saveEntries();
+        accountManager_.save();
+        ui_.printSuccess("帳號已成功刪除");
+        ui_.pressEnterToContinue();
+    } else {
+        ui_.printError("密碼錯誤，刪除取消");
+        ui_.pressEnterToContinue();
+    }
+}
+
 void DiaryApp::saveAndExit() {
     saveEntries();
     accountManager_.save();
@@ -296,7 +326,7 @@ void DiaryApp::run() {
         } else {
             // Feature menu
             ui_.showFeatureMenu();
-            int choice = ui_.promptNumber("請選擇", 1, 7);
+            int choice = ui_.promptNumber("請選擇", 1, 8);
 
             switch (choice) {
                 case 1: addEntry(); break;
@@ -305,11 +335,16 @@ void DiaryApp::run() {
                 case 4: editEntry(); break;
                 case 5: deleteEntry(); break;
                 case 6:
+                    deleteAccount();
+                    // After deletion, user is logged out, reload entries
+                    loadEntries();
+                    break;
+                case 7:
                     accountManager_.logout();
                     ui_.printSuccess("已登出");
                     ui_.pressEnterToContinue();
                     break;
-                case 7:
+                case 8:
                     saveAndExit();
                     running = false;
                     break;

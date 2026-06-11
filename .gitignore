@@ -5,3 +5,5 @@ data/*.json
 *.dSYM/
 .idea/
 *.iml
+Testing/
+.qwen/

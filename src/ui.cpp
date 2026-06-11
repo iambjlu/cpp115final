@@ -3,6 +3,9 @@
 #include <string>
 #include <limits>
 #include <cstdlib>
+#include <cstdio>
+#include <termios.h>
+#include <unistd.h>
 
 void TerminalUI::clearScreen() {
     std::cout << "\033[2J\033[H";
@@ -25,6 +28,39 @@ std::string TerminalUI::promptInput(const std::string& prompt) {
     std::string input;
     std::getline(std::cin, input);
     return input;
+}
+
+std::string TerminalUI::promptPassword(const std::string& prompt) {
+    std::cout << "\033[1;36m" << prompt << ": \033[0m";
+
+    // 關閉 echo
+    struct termios oldt, newt;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~ECHO;
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+    std::string password;
+    int ch;
+    while ((ch = fgetc(stdin)) != '\n' && ch != EOF) {
+        if (ch == '\r') {
+            std::cout << "*";
+        } else if (ch == 127 || ch == 8) {
+            // Backspace: 移除一個 * 和一個字元
+            if (!password.empty()) {
+                password.pop_back();
+                std::cout << "\b \b";
+            }
+        } else {
+            password += static_cast<char>(ch);
+            std::cout << "*";
+        }
+    }
+    std::cout << "\n";
+
+    // 恢復 echo
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return password;
 }
 
 int TerminalUI::promptNumber(const std::string& prompt, int minVal, int maxVal) {
@@ -67,8 +103,9 @@ void TerminalUI::showFeatureMenu() {
     std::cout << "║  3. 搜尋日記                        ║\n";
     std::cout << "║  4. 修改日記                        ║\n";
     std::cout << "║  5. 刪除日記                        ║\n";
-    std::cout << "║  6. 登出                            ║\n";
-    std::cout << "║  7. 儲存並離開                      ║\n";
+    std::cout << "║  6. 刪除帳號                        ║\n";
+    std::cout << "║  7. 登出                            ║\n";
+    std::cout << "║  8. 儲存並離開                      ║\n";
     std::cout << "╚══════════════════════════════════════╝\n";
 }
 
@@ -76,7 +113,7 @@ std::pair<std::string, std::string> TerminalUI::showLoginScreen() {
     clearScreen();
     std::cout << "\033[1;35m===== 登入 =====\033[0m\n";
     std::string username = promptInput("使用者名稱");
-    std::string password = promptInput("密碼");
+    std::string password = promptPassword("密碼");
     return {username, password};
 }
 
@@ -84,7 +121,7 @@ std::pair<std::string, std::string> TerminalUI::showRegisterScreen() {
     clearScreen();
     std::cout << "\033[1;35m===== 註冊新帳號 =====\033[0m\n";
     std::string username = promptInput("設定使用者名稱");
-    std::string password = promptInput("設定密碼");
+    std::string password = promptPassword("設定密碼");
     return {username, password};
 }
 

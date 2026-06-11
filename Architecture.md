@@ -81,11 +81,13 @@ cpp115final/
 - **方法**：`verifyPassword(plainText)` 驗證密碼、`to_json()` / `from_json()` 序列化
 
 #### `AccountManager`
-- **職責**：管理所有帳號的註冊、登入、查詢
+- **職責**：管理所有帳號的註冊、登入、查詢、刪除
 - **成員**：`std::map<std::string, Account> accounts`（以 username 為 key）
 - **方法**：
   - `registerAccount(username, password)` — 註冊新帳號
   - `login(username, password)` — 驗證並回傳目前登入的 Account 指標
+  - `logout()` — 登出目前帳號
+  - `deleteAccount(password)` — 驗證密碼後刪除目前登入的帳號
   - `getCurrentUser()` — 回傳目前登入使用者
   - `save()` / `load()` — 持久化帳號資料
 
@@ -119,6 +121,7 @@ cpp115final/
   - 主選單渲染（登入/註冊/功能選單）
   - 日記列表顯示（分頁）
   - 表單輸入（標題、內容、標籤）
+  - 密碼輸入隱藏（以 `*` 號顯示）
   - 搜尋結果顯示
   - 色彩主題（ANSI 色彩碼）
 
@@ -136,6 +139,7 @@ cpp115final/
   - `run()` — 主循環
   - `addEntry()`、`deleteEntry()`、`editEntry()`
   - `searchEntries()`、`listEntries()`
+  - `deleteAccount()` — 驗證密碼後刪除帳號及相關日記
   - `saveAndExit()`
 
 ## 5. 資料流

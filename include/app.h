@@ -26,6 +26,7 @@ private:
     void editEntry();
     void searchEntries();
     void listEntries();
+    void deleteAccount();
 
     // Helper to filter diary entries by owner
     std::vector<DiaryEntry*> getOwnerDiaries(const std::string& ownerId);

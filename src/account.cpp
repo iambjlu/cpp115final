@@ -79,6 +79,18 @@ void AccountManager::logout() {
     currentUser_ = nullptr;
 }
 
+bool AccountManager::deleteAccount(const std::string& password) {
+    if (!currentUser_) {
+        return false;
+    }
+    if (!currentUser_->verifyPassword(password)) {
+        return false;
+    }
+    accounts_.erase(currentUser_->username);
+    currentUser_ = nullptr;
+    return true;
+}
+
 void AccountManager::save() {
     std::ofstream file("data/accounts.json");
     if (!file.is_open()) return;

@@ -37,6 +37,9 @@ public:
     Account* getCurrentUser() const { return currentUser_; }
     bool isLoggedIn() const { return currentUser_ != nullptr; }
 
+    // Delete current account after password verification
+    bool deleteAccount(const std::string& password);
+
     void save();
     void load();
 
