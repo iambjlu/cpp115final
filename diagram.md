@@ -269,7 +269,53 @@ flowchart TD
     R --> M
 ```
 
-## 7. 開發迭代流程圖
+## 7. Use Case 圖
+
+```mermaid
+graph TB
+    User(("👤 使用者"))
+
+    subgraph System["智慧日記本系統"]
+        UC1[("📝 註冊帳號<br/>UC1")]
+        UC2[("🔑 登入系統<br/>UC2")]
+        UC3[("🚪 登出<br/>UC3")]
+        UC4[("🗑️ 刪除帳號<br/>UC4")]
+        UC5[("✏️ 新增日記<br/>UC5")]
+        UC6[("📝 修改日記<br/>UC6")]
+        UC7[("❌ 刪除日記<br/>UC7")]
+        UC8[("📋 瀏覽日記列表<br/>UC8")]
+        UC9[("🔍 搜尋日記<br/>UC9")]
+        UC9a[("📅 依日期搜尋<br/>UC9a")]
+        UC9b[("🔤 依關鍵字搜尋<br/>UC9b")]
+        UC9c[("🏷️ 依標籤搜尋<br/>UC9c")]
+        UC10[("💾 資料持久化<br/>UC10")]
+    end
+
+    User --> UC1
+    User --> UC2
+    User --> UC3
+    User --> UC4
+    User --> UC5
+    User --> UC6
+    User --> UC7
+    User --> UC8
+    User --> UC9
+
+    UC9 -. include .-> UC9a
+    UC9 -. include .-> UC9b
+    UC9 -. include .-> UC9c
+
+    UC1 -. include .-> UC10
+    UC2 -. include .-> UC10
+    UC5 -. include .-> UC10
+    UC6 -. include .-> UC10
+    UC7 -. include .-> UC10
+    UC4 -. include .-> UC10
+
+    UC4 -- extend --> UC2
+```
+
+## 8. 開發迭代流程圖
 
 ```mermaid
 graph LR
